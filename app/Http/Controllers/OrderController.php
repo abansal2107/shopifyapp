@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\URL;
 
 class OrderController extends Controller
 {
@@ -14,7 +16,8 @@ class OrderController extends Controller
         );
         \PHPShopify\ShopifySDK::config($config);
         $scopes = 'write_orders';
-        $redirectUrl = 'http://127.0.0.1:8000/getaccesstoken';
+        $url = URL::to('/'); 
+        $redirectUrl = $url . '/getaccesstoken';
         $accessToken = \PHPShopify\AuthHelper::createAuthRequest($scopes);
         var_dump($accessToken, 'accesstoken');
     }
@@ -48,7 +51,14 @@ class OrderController extends Controller
     public function webhooks_recived_order(){
 
         $webhook_payload_cnt = file_get_contents('php://input');
-        Log::info('Log message   Order webhooks recived order', ['context_url' => "shopify webhooks", 'context_response' => $webhook_payload_cnt]);
+        $output = json_decode($webhook_payload_cnt);
         
+        $result = "\n\n" . "Order Id : " . $output->{'id'} . "\n\n" . "Shopify Id :  " . $output->{'app_id'} . "\n\n" . "Order Date : "  . $output->{'created_at'} . "\n\n" . "Amount : " . $output->{'current_subtotal_price'} . "\n\n" ;
+        
+        $text = print_r($result,true);
+        file_put_contents($output->{'id'} . '.txt', $text, TRUE);
+        
+        Log::info('Log message   Order webhooks recived order', ['context_url' => "shopify webhooks", 'context_response' => $result]);
+        die('end');
     }
 }

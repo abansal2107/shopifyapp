@@ -20,4 +20,4 @@ Route::get('/', function () {
 
 Route::get('/getaccesstoken', [OrderController::class, 'getaccesstoken']);
 Route::get('/createorder', [OrderController::class, 'createOrder']);
-Route::post('/shopify-orders-webhook', [OrdersController::class, 'webhooks_recived_order']);
+Route::post('/shopify-orders-webhook-test', [OrderController::class, 'webhooks_recived_order']);
